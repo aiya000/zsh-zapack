@@ -31,22 +31,37 @@ function zpk::load_init_script_if_available () {
 
 	if [ -f "$repo/$repo_name.zsh" ] ; then
 		source "$repo/$repo_name.zsh"
+		if [ "$verbose_is_specified" -eq 1 ] ; then
+			echo "loaded: $repo/$repo_name.zsh"
+		fi
 		return
 	elif [ -f "$repo/$repo_name.sh" ] ; then
 		source "$repo/$repo_name.sh"
+		if [ "$verbose_is_specified" -eq 1 ] ; then
+			echo "loaded: $repo/$repo_name.sh"
+		fi
 		return
 	elif [ -f "$repo/$repo_name" ] ; then
 		source "$repo/$repo_name"
+		if [ "$verbose_is_specified" -eq 1 ] ; then
+			echo "loaded: $repo/$repo_name"
+		fi
 		return
 	fi
 
 	repo_name=$(zpk::extract_name_from_case_of_prefix_zsh "$repo")
 	if [ -f "$repo/$repo_name.zsh" ] ; then
 		source "$repo/$repo_core_name.zsh"
+		if [ "$verbose_is_specified" -eq 1 ] ; then
+			echo "loaded: $repo/$repo_core_name.zsh"
+		fi
 	fi
 
 	repo_core_name=$(zpk::extract_name_from_case_of_prefix_sh "$repo")
 	if [ -f "$repo/$repo_name.sh" ] ; then
 		source "$repo/$repo_core_name.sh"
+		if [ "$verbose_is_specified" -eq 1 ] ; then
+			echo "loaded: $repo/$repo_core_name.sh"
+		fi
 	fi
 }

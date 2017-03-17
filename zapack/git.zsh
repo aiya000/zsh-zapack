@@ -16,6 +16,10 @@ function zpk::git_submudule_pull () {
 	cd "$repo" > /dev/null
 	git submodule update --init --recursive
 
+	if [ "$verbose_is_specified" -eq 1 ] ; then
+		echo "(in $repo) git submodule update --init --recursive"
+	fi
+
 	# Resume directory stack
 	cd "$prev_dir"
 	cd "$cur_dir"
