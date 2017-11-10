@@ -15,8 +15,25 @@ function zpk::add_to_paths () {
 }
 
 # Add repos to runtime paths
-for repo in $(ls -d "$ZAPACK_REPODIR"/*) ; do
-    zpk::add_to_paths "$repo"
-    zpk::git_submudule_pull "$repo"
-    zpk::load_init_script_if_available "$repo"
-done
+# and Load init scripts
+function zapack-init () {
+    for repo in $(ls -d "$ZAPACK_REPODIR"/*) ; do
+        if [[ -z $(ls $repo) ]] ; then
+            echo empty repository detected: $repo
+        else
+            zpk::add_to_paths "$repo"
+            zpk::load_init_script_if_available "$repo"
+        fi
+    done
+}
+
+# Pull registered modules
+# and Load it
+function zapack-install () {
+    for repo in $(ls -d "$ZAPACK_REPODIR"/*) ; do
+        zpk::git_submudule_pull "$repo"
+    done
+    zapack-init
+}
+
+zapack-init
