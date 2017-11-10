@@ -28,40 +28,16 @@ function zpk::extract_name_from_case_of_prefix_sh () {
 function zpk::load_init_script_if_available () {
     local repo="$1"
     local repo_name=$(zpk::get_repo_name "$repo")
+    local script
 
-    if [ -f "$repo/$repo_name.zsh" ] ; then
-        source "$repo/$repo_name.zsh"
-        if [ "$verbose_is_specified" -eq 1 ] ; then
-            echo "loaded: $repo/$repo_name.zsh"
-        fi
-        return
-    elif [ -f "$repo/$repo_name.sh" ] ; then
-        source "$repo/$repo_name.sh"
-        if [ "$verbose_is_specified" -eq 1 ] ; then
-            echo "loaded: $repo/$repo_name.sh"
-        fi
-        return
-    elif [ -f "$repo/$repo_name" ] ; then
-        source "$repo/$repo_name"
-        if [ "$verbose_is_specified" -eq 1 ] ; then
-            echo "loaded: $repo/$repo_name"
-        fi
-        return
-    fi
+    script=$(ls "$repo/$repo_name.zsh" "$repo/$repo_name.sh" "$repo/$repo_name" 2> /dev/null | head -1) \
+        || script=$(ls "$repo/$(zpk::extract_name_from_case_of_prefix_zsh "$repo").zsh" 2> /dev/null) \
+        || script=$(ls "$repo/$(zpk::extract_name_from_case_of_prefix_sh "$repo").sh" 2> /dev/null)
 
-    repo_name=$(zpk::extract_name_from_case_of_prefix_zsh "$repo")
-    if [ -f "$repo/$repo_name.zsh" ] ; then
-        source "$repo/$repo_core_name.zsh"
+    if [[ -f $script ]] ; then
+        source "$script"
         if [ "$verbose_is_specified" -eq 1 ] ; then
-            echo "loaded: $repo/$repo_core_name.zsh"
-        fi
-    fi
-
-    repo_core_name=$(zpk::extract_name_from_case_of_prefix_sh "$repo")
-    if [ -f "$repo/$repo_name.sh" ] ; then
-        source "$repo/$repo_core_name.sh"
-        if [ "$verbose_is_specified" -eq 1 ] ; then
-            echo "loaded: $repo/$repo_core_name.sh"
+            echo "loaded: $script"
         fi
     fi
 }
