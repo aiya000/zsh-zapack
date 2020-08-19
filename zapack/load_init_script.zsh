@@ -30,9 +30,13 @@ function zpk::load_init_script_if_available () {
     local repo_name=$(zpk::get_repo_name "$repo")
     local script
 
-    script=$(ls "$repo/$repo_name.zsh" "$repo/$repo_name.sh" "$repo/$repo_name" 2> /dev/null | head -1) \
-        || script=$(ls "$repo/$(zpk::extract_name_from_case_of_prefix_zsh "$repo").zsh" 2> /dev/null) \
-        || script=$(ls "$repo/$(zpk::extract_name_from_case_of_prefix_sh "$repo").sh" 2> /dev/null)
+    # Use "find -print -quit" to print the first matching file
+    script=$(find \
+        "$repo/$repo_name.zsh" "$repo/$repo_name.sh" "$repo/$repo_name" \
+        "$repo/$(zpk::extract_name_from_case_of_prefix_zsh "$repo_name").zsh" \
+        "$repo/$(zpk::extract_name_from_case_of_prefix_sh "$repo_name").sh" \
+        -maxdepth 0 -type f -print -quit 2> /dev/null
+    )
 
     if [[ -f $script ]] ; then
         source "$script"
